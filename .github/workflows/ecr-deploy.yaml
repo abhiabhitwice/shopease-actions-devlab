@@ -55,5 +55,12 @@ jobs:
           REPOSITORY: ${{ vars.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t REGISTRY/REPOSITORY:$IMAGE_TAG .
-          docker push REGISTRY/REPOSITORY:$IMAGE_TAG
+          # Convert variables to lowercase and ensure $ syntax is used
+          REG=$(echo "${{ env.REGISTRY }}" | tr '[:upper:]' '[:lower:]')
+          REPO=$(echo "${{ env.REPOSITORY }}" | tr '[:upper:]' '[:lower:]')
+          TAG=$(echo "${{ env.IMAGE_TAG }}" | tr '[:upper:]' '[:lower:]')
+          
+          IMAGE_URI="$REG/$REPO:$TAG"
+          
+          docker build -t "$IMAGE_URI" .
+          docker push "$IMAGE_URI"
